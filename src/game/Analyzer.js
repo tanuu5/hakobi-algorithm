@@ -1,7 +1,7 @@
 // 主人公（最適化 AI「ハコビ」）の分析：工場を見張って、ボトルネックを見つけたらログに書く。
 // 同じ注意は間をあけて出す（うるさくしない）。文はすべて i18n のキー（log.〇〇）。
 import { DESTS } from './sim/consts.js';
-import { armProblem } from './ui/GameUI.js';
+import { armProblem, labelerProblem } from './ui/GameUI.js';
 
 export class Analyzer {
   constructor(game) {
@@ -88,6 +88,8 @@ export class Analyzer {
     }
     // 向きが合っていないアーム
     for (const a of w.lists.arms) if (armProblem(a)) { this._say('warn', 'log.armBad', { x: a.x, y: a.y }, 'armBad', 40); break; }
+    // 出口がふさがっているラベル機（少し続いたら）
+    for (const l of w.lists.labelers) if (l.outWait > 4 && labelerProblem(l) === 'st.labJam') { this._say('warn', 'log.labJam', { x: l.x, y: l.y }, 'labJam', 40); break; }
     // 充電できない
     if (w.robots.some((r) => r.noChg)) this._say('bad', 'log.noCharger', {}, 'nochg', 40);
     // 床に荷物

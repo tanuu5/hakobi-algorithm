@@ -362,4 +362,7 @@ export const en = {
   'st.armNoSrc': 'Nothing to take behind it (blue): needs a belt, shelf or dock',
   'st.armNoDst': 'Nowhere to put in front (orange): needs a port, shelf or belt',
   'log.armBad': 'The arm at ({x}, {y}) can’t work. Check that it takes from the back (blue) and puts to the front (orange).',
+  'st.labNoDst': 'No belt in front (orange) to send parcels to. Waiting for a robot to pick them up.',
+  'st.labJam': 'The belt beyond the exit isn’t moving, so parcels can’t leave (check for a jam further on).',
+  'log.labJam': 'The labeler at ({x}, {y}) has a blocked exit. Check whether the belt beyond the front (orange) is jammed.',
 };

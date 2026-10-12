@@ -129,7 +129,7 @@ export class World {
     }
     for (const d of this.lists.docks) { d.queue = []; d.bay = null; d.line = []; d.outCd = 0; d.unCd = 0; }
     for (const a of this.lists.arms) { a.phase = 'idle'; a.t = 0; a.held = null; }
-    for (const l of this.lists.labelers) { l.inQ = []; l.cur = null; l.outQ = []; }
+    for (const l of this.lists.labelers) { l.inQ = []; l.cur = null; l.outQ = []; l.outWait = 0; }
     this.rs.newDay();
     this.relink();
   }
@@ -267,7 +267,7 @@ export class World {
       case 'arm': b.phase = 'idle'; b.t = 0; b.held = null; b.ang = (dir + 2) & 3; b.busy = 0; b.waitT = 0; break;
       case 'pad': b.store = []; b.res = 0; b.drones = []; b.fullT = 0; break;
       case 'shelf': b.store = []; break;
-      case 'labeler': b.inQ = []; b.cur = null; b.t = 0; b.outQ = []; b.outCd = 0; break;
+      case 'labeler': b.inQ = []; b.cur = null; b.t = 0; b.outQ = []; b.outCd = 0; b.outWait = 0; break;
       case 'charger': b.user = null; b.resBy = null; break;
       case 'dock': b.queue = []; b.bay = null; b.line = []; b.outCd = 0; b.unCd = 0; b.fullT = 0; break;
     }
@@ -638,8 +638,10 @@ export class World {
     l.outCd -= dt;
     if (l.outCd <= 0 && l.outQ.length) {
       const i = l.outQ.findIndex((p) => !p.res);
-      if (i >= 0 && this._pushOut(l, l.outQ[i])) { l.outQ.splice(i, 1); l.outCd = 0.32; }
+      if (i >= 0 && this._pushOut(l, l.outQ[i])) { l.outQ.splice(i, 1); l.outCd = 0.32; l.outWait = 0; }
     }
+    // 出口の先が流れず、出せないまま待っている時間（人型ロボが拾いに来る目安・詰まりの表示）
+    l.outWait = l.outQ.length ? (l.outWait || 0) + dt : 0;
   }
 
   // ------------------------------------------------------------------ アーム

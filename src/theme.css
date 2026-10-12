@@ -161,7 +161,7 @@ select { font: inherit; padding: 0.25em 0.5em; border-radius: 8px; border: 1px s
 /* 道具箱 */
 .tools { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(10px + var(--safe-b)); display: flex; align-items: center; gap: 6px;
   max-width: calc(100vw - 24px - var(--safe-l) - var(--safe-r)); padding: 6px 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; backdrop-filter: blur(6px); }
-.tlist { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; overscroll-behavior: contain; }
+.tlist { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; touch-action: pan-x; scrollbar-width: none; overscroll-behavior: contain; }
 .tlist::-webkit-scrollbar { display: none; }
 .tool { position: relative; flex: none; min-width: 0; width: 72px; height: 76px; padding: 6px 2px 4px; display: grid; justify-items: center; align-content: start; gap: 1px;
   border-radius: 11px; background: transparent; border: 1px solid transparent; color: var(--ink2); font-weight: 600; }
@@ -182,9 +182,9 @@ select { font: inherit; padding: 0.25em 0.5em; border-radius: 8px; border: 1px s
 .tools .iconbtn [data-glyph]:empty { display: none; }
 .rdir { font: 700 12px var(--mono); color: var(--cyan); }
 .ana.on { background: rgba(56, 225, 255, 0.2); border-color: var(--cyan); color: var(--cyan); }
-.hint { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(104px + var(--safe-b)); opacity: 0; }
+.hint { position: absolute; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 24px); bottom: calc(104px + var(--safe-b)); opacity: 0; }
 .hint.on { opacity: 1; }
-.hint-text { display: block; padding: 5px 14px; border-radius: 999px; background: rgba(6, 12, 24, 0.82); border: 1px solid var(--line); font-size: 13px; color: var(--ink); white-space: nowrap; }
+.hint-text { min-width: 0; display: block; padding: 5px 14px; border-radius: 999px; background: rgba(6, 12, 24, 0.82); border: 1px solid var(--line); font-size: 13px; color: var(--ink); white-space: nowrap; }
 
 /* 調べる窓 */
 #inspector { position: absolute; left: calc(12px + var(--safe-l)); top: calc(96px + var(--safe-t)); width: min(320px, 40vw); max-height: calc(100% - 230px - var(--safe-t) - var(--safe-b)); overflow-y: auto;
@@ -311,7 +311,7 @@ select { font: inherit; padding: 0.25em 0.5em; border-radius: 8px; border: 1px s
   .tools .iconbtn { width: 42px; height: 52px; }
   .hint { bottom: calc(84px + var(--safe-b)); max-width: 94vw; }
   .hint-text { white-space: normal; text-align: center; font-size: 12px; }
-  .startday { right: 50%; transform: translateX(50%); bottom: calc(120px + var(--safe-b)); }
+  .startday { right: 50%; translate: 50% 0; bottom: calc(142px + var(--safe-b)); }
   .startday [data-glyph] { display: none; }
   #inspector { left: 0; right: 0; top: auto; bottom: calc(76px + var(--safe-b)); width: auto; max-height: 42vh; border-radius: 16px 16px 0 0; border-bottom: 0; }
   .toast { bottom: calc(150px + var(--safe-b)); }
@@ -370,7 +370,7 @@ select { font: inherit; padding: 0.25em 0.5em; border-radius: 8px; border: 1px s
 .gl-tag.take, .wl.take { background: #2f7fe0; border-color: #9cc8ff; color: #fff; }
 .gl-tag.put, .wl.put { background: #e8861f; border-color: #ffd29c; color: #fff; }
 .wl.take, .wl.put { font-size: 12px; padding: 2px 10px; }
-.hint .hint-help { pointer-events: auto; min-width: 0; white-space: nowrap; margin-left: 6px; padding: 3px 10px 3px 6px; border-radius: 999px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; vertical-align: middle; }
+.hint .hint-help { flex: none; pointer-events: auto; min-width: 0; white-space: nowrap; margin-left: 6px; padding: 3px 10px 3px 6px; border-radius: 999px; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; vertical-align: middle; }
 .hint .hint-help b { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--cyan); color: var(--cyan-ink); font-size: 12px; }
 .hint .hint-help [data-glyph] { font-size: 10px; }
 .hint .hint-help [data-glyph]:empty { display: none; }

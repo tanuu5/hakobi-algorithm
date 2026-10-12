@@ -17,6 +17,7 @@ const DRAIN = { move: 0.85, carry: 0.15, work: 0.4, idle: 0.04 };
 const N = W * H;
 const AVOID_T = 0.45;       // これだけ待ったら、よけて通る道を探す
 const PASS_T = 2.4;         // これより長く待ったら、重なってもすり抜ける
+const LAB_STUCK = 1.2;      // ラベル機の出口でこれより長く待っている荷物は拾いに行く
 const CROWD_STAND = 14;     // 立ち止まっているロボのマスを通る重さ
 const CROWD_GOAL = 5;       // ほかのロボが向かっているマス（行き先を散らす）
 
@@ -517,7 +518,8 @@ export class RobotSystem {
     };
     for (const d of w.lists.docks) if (d.cfg.collect) for (const p of d.queue) add(p, 'dock', d, d.x, d.y);
     for (const s of w.lists.shelves) if (s.cfg.collect !== false) for (const p of s.store) add(p, 'shelf', s, s.x, s.y);
-    for (const l of w.lists.labelers) for (const p of l.outQ) add(p, 'labeler', l, l.x, l.y);
+    // ラベル機の出口：ふだんはベルトに流れるので、出せずに待っているときだけ拾う
+    for (const l of w.lists.labelers) if (l.outWait > LAB_STUCK) for (const p of l.outQ) add(p, 'labeler', l, l.x, l.y);
     for (const b of w.lists.belts) {
       for (const L of b.lanes) {
         const p = L[0];

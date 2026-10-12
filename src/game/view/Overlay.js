@@ -309,7 +309,7 @@ export class Overlay {
       } else if (b.type === 'shelf') {
         const f = b.store.length / perf.shelfCap;
         c = f >= 0.99 ? HOT : f > 0.5 ? MID : GOOD;
-      } else if (b.type === 'labeler') c = b.inQ.length >= 3 ? HOT : b.cur ? GOOD : IDLE;
+      } else if (b.type === 'labeler') c = b.inQ.length >= 3 || b.outWait > 1.2 ? HOT : b.cur || b.outQ.length ? GOOD : IDLE;
       else if (b.type === 'charger') c = b.user ? MID : IDLE;
       if (c) put(b.x, b.y, c);
     }

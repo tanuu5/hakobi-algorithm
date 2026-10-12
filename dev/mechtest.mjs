@@ -39,6 +39,30 @@ console.log('ラベル機：不明の荷物を読めるようにして前へ出�
   ok(st.length === 4 && st.every((p) => !p.unk && p.dest === 2), `棚に読める C が 4 個（${st.length}）`);
 }
 
+console.log('ラベル機の出口：流れているあいだは人型ロボが拾わず、ふさがったら拾う');
+{
+  const w = fresh();
+  line(w, 2, 8, 5, 8, 0);
+  w.build('labeler', 6, 8, 0);
+  line(w, 7, 8, 9, 8, 0);
+  w.build('shelf', 10, 8);
+  w.configure(w.at(10, 8), { collect: false }); // 棚からはロボが取らない（出口だけを見る）
+  w.build('pad', 6, 12, 0, { dest: 2 });
+  w.build('charger', 3, 3);
+  w.hire(4, 5);
+  w.begin();
+  const lab = w.at(6, 8);
+  let robotTook = 0, maxWait = 0;
+  // 不明を混ぜて詰めて流す（不明のあとは出口に並ぶ）：棚に入るうちはロボは来ない
+  for (let i = 0; i < 6; i++) { feed(w, 2, 8, 2, { dest: 2, unk: i % 3 === 0 }); run(w, 0.5); }
+  for (let i = 0; i < 20 * 60; i++) { w.step(1 / 60); w.events.length = 0; maxWait = Math.max(maxWait, lab.outWait); if (w.robots[0].carry.length) robotTook++; }
+  ok(w.at(10, 8).store.length === 6 && robotTook === 0, `流れているときは棚へ 6 個、ロボは拾わない（${w.at(10, 8).store.length}、出口の待ち最大 ${maxWait.toFixed(2)} 秒）`);
+  // 棚を満杯に（ベルトがふさがる）→ 出口で待つ荷物をロボが拾ってポートへ
+  for (let i = 0; i < 16; i++) { feed(w, 2, 8, 2, { dest: 2 }); run(w, 0.5); }
+  run(w, 40);
+  ok(w.stats.delivered > 0, `ふさがったら、ロボが出口から拾って出荷（${w.stats.delivered}）`);
+}
+
 console.log('人型ロボ：ベルトの行き止まりから拾ってポートへ（不明も読む）');
 {
   const w = fresh();

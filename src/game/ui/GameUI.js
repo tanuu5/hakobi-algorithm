@@ -14,6 +14,15 @@ export function armProblem(a) {
   return null;
 }
 
+/** ラベル機が荷物を出せない理由（i18n のキー）。出せているなら null。 */
+export function labelerProblem(l) {
+  const dst = l.nb[l.dir];
+  const arm = dst?.type === 'arm' && dst.dir === l.dir; // 前のアームが後ろ（ラベル機）から取る
+  if (!dst || (!['belt', 'sorter', 'junction'].includes(dst.type) && !arm)) return 'st.labNoDst';
+  if (l.outWait > 1.2) return 'st.labJam';
+  return null;
+}
+
 export const yen = (v) => (v < 0 ? '-¥' : '¥') + Math.abs(Math.round(v * 100)).toLocaleString('en-US');
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 export const clock = (tt) => { const m = 8 * 60 + Math.floor((tt / DAY_LEN) * 600); return `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`; };
@@ -443,10 +452,15 @@ export class GameUI {
         case 'shelf': s = t('st.shelf', { n: b.store.length, c: perf.shelfCap }); break;
         case 'dock': s = t('st.dock', { n: b.queue.length, c: perf.dockCap, k: b.line.length + (b.bay ? 1 : 0) }); break;
         case 'charger': s = b.user ? t('st.chgUse', { n: String(b.user.no).padStart(2, '0') }) : t('st.chgFree'); break;
-        case 'labeler': s = t('st.labeler', { n: b.inQ.length + (b.cur ? 1 : 0) }); break;
+        case 'labeler': {
+          const why = labelerProblem(b);
+          s = why ? t(why) : t('st.labeler', { n: b.inQ.length + (b.cur ? 1 : 0) });
+          this.E.insSt.classList.toggle('bad', !!why);
+          break;
+        }
       }
     }
-    if (sel.kind !== 'b' || sel.ref.type !== 'arm') this.E.insSt.classList.remove('bad');
+    if (sel.kind !== 'b' || (sel.ref.type !== 'arm' && sel.ref.type !== 'labeler')) this.E.insSt.classList.remove('bad');
     this.E.insSt.textContent = s;
   }
 
